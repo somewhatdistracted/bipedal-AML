@@ -1,6 +1,10 @@
 try:
 	import vrep
 	import time
+	import tensorflow as tf
+	import pandas as pd
+	import model_iterator
+	import math
 except:
     print ('--------------------------------------------------------------')
     print ('"vrep.py" could not be imported. This means very probably that')
@@ -56,11 +60,18 @@ def run_sim(model, clientID):
 		
 		# do something to the joints dummy right now
 		#remember to convert to radians and back
-		newJointPositions = legPositions 
+		
+		for i in range(len(newJointPositions)):
+			legPositions[i] = legPositions[i] * 180 / math.pi
+		
+		newJointPositions = model_iterator.runModel(model,legPositions)
+		
+		for i in range(len(newJointPositions)):
+			newJointPositions[i] = newJointPositions[i] * math.pi / 180
 		
 		vrep.simxPauseCommunication(clientID,1)
 		for i in range(12):
-			vrep.simxSetJointTargetPosition(clientID,legJoints[i],newJointPositions[i] - 1,vrep.simx_opmode_oneshot)
+			vrep.simxSetJointTargetPosition(clientID,legJoints[i],legPositions[i],vrep.simx_opmode_oneshot)
 		vrep.simxPauseCommunication(clientID,0)
 		time.sleep(0.001)
 		

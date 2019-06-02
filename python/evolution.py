@@ -24,8 +24,9 @@ import tensorflow as tf
 import pandas as pd
 import simulation
 import random
-import create_model
+import model_iterator
 import time
+import math
 
 print ('Program started')
 vrep.simxFinish(-1) # just in case, close all opened connections
@@ -33,8 +34,7 @@ clientID = vrep.simxStart('127.0.0.1',19997,True,True,5000,5) # Connect to V-REP
 
 if clientID!=-1:
 	#get initial model
-	#first_model = create_model.getModel();
-	first_model = [1,1,1,1,1,1,1,1,1,1,1,1]
+	first_model = model_iterator.getModel();
 	best_models = [first_model,first_model,first_model,first_model,first_model]
 						
 	for iteration in range(10):
@@ -67,6 +67,7 @@ if clientID!=-1:
 						
 		best_models = best_new_models
 		print(best_new_distance)
+	
 	
     # Before closing the connection to V-REP, make sure that the last command sent out had time to arrive. You can guarantee this with (for example):
 	vrep.simxGetPingTime(clientID)
