@@ -20,10 +20,11 @@ except:
     print ('--------------------------------------------------------------')
     print ('')
 	
-#import tensorflow as tf
+import tensorflow as tf
+import pandas as pd
 import simulation
 import random
-#import create_model
+import create_model
 import time
 
 print ('Program started')
@@ -41,7 +42,7 @@ if clientID!=-1:
 		best_new_distance = []
 		best_new_models = []
 		for m, curr_model in enumerate(best_models):
-			for permutation in range(len(curr_model)):
+			for permutation in range(10):
 				model = curr_model
 				if permutation != 1:
 					model = curr_model #change to permuted model

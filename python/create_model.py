@@ -1,6 +1,6 @@
 import tensorflow as tf
-
-model = await tf.loadLayersModel('D:\Biped\preTrainedModel.json')
+import pandas as pd
 
 def getModel():
+	model = tf.loadLayersModel('D:\Biped\preTrainedModel.json')
 	return model
