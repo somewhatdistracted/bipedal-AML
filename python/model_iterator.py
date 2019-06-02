@@ -1,5 +1,5 @@
 '''
-Neural network iterator for
+Neural network iterator
 Ian MacFarlane 2019
 '''
 from __future__ import absolute_import
@@ -39,4 +39,8 @@ def permuteModel(model):
     model.set_weights(weights)
     return model
 
-permuteModel(getModel())
+def runModel(model, data):
+    t = pd.DataFrame.from_dict(data)
+    t.rename(columns = {0 : 'RHipAngleX', 1 : 'RHipAngleY', 2 : 'RHipAngleZ', 3 : 'LHipAngleX', 4 : 'LHipAngleY', 5 : 'LHipAngleZ',
+    6 : 'RKneeAngleZ', 7 : 'LKneeAngleZ', 8 : "RAnkleAngleX", 9 : "RAnkleAngleZ", 10 : "LAnkleAngleX", 11 : "LAnkleAngleZ"}, inplace = True)
+    return model.predict(t)
