@@ -16,7 +16,7 @@ import numpy as np
 def norm(x):
     indices = ['RHipAngleX', 'RHipAngleY', 'RHipAngleZ', 'LHipAngleX', 'LHipAngleY', 'LHipAngleZ',
     'RKneeAngleZ', 'LKneeAngleZ', "RAnkleAngleX", "RAnkleAngleZ", "LAnkleAngleX", "LAnkleAngleZ"]
-    n = pd.read_csv("norm.csv", index_col = indices, columns = ['count', 'mean', 'std', 'min', '25%', '50%', '75%', 'max'])
+    n = pd.read_csv("norm.csv", index_col = indices, names = ['count', 'mean', 'std', 'min', '25%', '50%', '75%', 'max'])
     return (x - n['mean']) / n['std']
 
 def getModel():
