@@ -14,7 +14,7 @@ import pandas as pd
 import numpy as np
 
 def norm(x):
-    n = read_csv("norm.csv")
+    n = pd.read_csv("norm.csv")
     return (x - n['mean']) / n['std']
 
 def getModel():
