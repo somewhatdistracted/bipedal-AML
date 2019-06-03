@@ -55,7 +55,7 @@ def permuteModel(model):
             delta = np.random.rand(x)
         else:
             z = y[0]
-            delta = np.random.rand(x,z)
+            delta = np.random.rand(x,z) - 0.5
         weights[i] = weights[i] + delta
     model.set_weights(weights)
     return model
