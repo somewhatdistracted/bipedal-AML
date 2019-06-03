@@ -65,4 +65,11 @@ def runModel(model, data):
     'RKneeAngleZ', 'LKneeAngleZ', "RAnkleAngleX", "RAnkleAngleZ", "LAnkleAngleX", "LAnkleAngleZ"])
     return model.predict(norm(t))
 
+def getActual(step):
+    column_names = ['RHipAngleX', 'RHipAngleY', 'RHipAngleZ', 'LHipAngleX', 'LHipAngleY', 'LHipAngleZ',
+    'RKneeAngleZ', 'LKneeAngleZ', "RAnkleAngleX", "RAnkleAngleZ", "LAnkleAngleX", "LAnkleAngleZ"]
+    raw = pd.read_csv('training_sub_1.csv', names = column_names)
+    dataset = raw.copy()
+    return dataset[step].tolist()
+
 #print(runModel(getModel(), [(1,1,1,1,1,1,1,1,1,1,1,1)])) <---- here is the form for data input
