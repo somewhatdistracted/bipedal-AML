@@ -19,6 +19,7 @@ def run_sim(model, clientID):
 		
 	#RhipX,RhipY,RhipZ,LhipX,LhipY,LhipZ,RKneeZ,LKneeZ,RAnkleX,RAnkleZ,LAnkleX,LAnkleZ
 	legJoints = [0,0,0,0,0,0,0,0,0,0,0,0]
+	legJointInv = [1,1,1,-1,-1,1,1,1,1,1,-1,1]
 	
 	returnCode01, legJoints[0] = vrep.simxGetObjectHandle(clientID, "rightLegJoint0", vrep.simx_opmode_blocking)
 	returnCode02, legJoints[1] = vrep.simxGetObjectHandle(clientID, "rightLegJoint1", vrep.simx_opmode_blocking)
@@ -60,18 +61,20 @@ def run_sim(model, clientID):
 		
 		# do something to the joints dummy right now
 		#remember to convert to radians and back
+		degreeLegPositions = [0,0,0,0,0,0,0,0,0,0,0,0]
+		for i in range(len(legPositions)):
+			degreeLegPositions[i] = legPositions[i] * legJointInv[i] * 180 / math.pi
 		
-		for i in range(len(newJointPositions)):
-			legPositions[i] = legPositions[i] * 180 / math.pi
+		newJointPositions = model_iterator.runModel(model,[tuple(degreeLegPositions)])
 		
-		newJointPositions = model_iterator.runModel(model,legPositions)
+		newJointPositions = newJointPositions[0]
 		
 		for i in range(len(newJointPositions)):
 			newJointPositions[i] = newJointPositions[i] * math.pi / 180
 		
 		vrep.simxPauseCommunication(clientID,1)
 		for i in range(12):
-			vrep.simxSetJointTargetPosition(clientID,legJoints[i],legPositions[i],vrep.simx_opmode_oneshot)
+			vrep.simxSetJointTargetPosition(clientID,legJoints[i],newJointPositions[i] * legJointInv[i],vrep.simx_opmode_oneshot)
 		vrep.simxPauseCommunication(clientID,0)
 		time.sleep(0.001)
 		
@@ -83,6 +86,6 @@ def run_sim(model, clientID):
 	distanceTraveled = (((end_r[1] + end_l[1])/2) - ((begin_r[1] + begin_l[1])/2))
 			
 	vrep.simxStopSimulation(clientID,vrep.simx_opmode_oneshot_wait)
-	time.sleep(0.1)
+	time.sleep(0.25)
 	
 	return distanceTraveled
