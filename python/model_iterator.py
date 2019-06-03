@@ -45,5 +45,4 @@ def runModel(model, data):
     'RKneeAngleZ', 'LKneeAngleZ', "RAnkleAngleX", "RAnkleAngleZ", "LAnkleAngleX", "LAnkleAngleZ"])
     return model.predict(norm(t))
 
-print(permuteModel(getModel()))
 #print(runModel(getModel(), [(1,1,1,1,1,1,1,1,1,1,1,1)])) <---- here is the form for data input
