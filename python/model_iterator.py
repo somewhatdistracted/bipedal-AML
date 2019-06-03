@@ -32,10 +32,10 @@ def permuteModel(model):
     for i in range(weights.shape[0]):
         x, *y = weights[i].shape
         if len(y) == 0:
-            z = 1
+            delta = np.random.rand(x)
         else:
             z = y[0]
-        delta = np.random.rand(x,z)
+            delta = np.random.rand(x,z)
         weights[i] = weights[i] + delta
     model.set_weights(weights)
     return model
@@ -45,4 +45,5 @@ def runModel(model, data):
     'RKneeAngleZ', 'LKneeAngleZ', "RAnkleAngleX", "RAnkleAngleZ", "LAnkleAngleX", "LAnkleAngleZ"])
     return model.predict(norm(t))
 
+print(permuteModel(getModel()))
 #print(runModel(getModel(), [(1,1,1,1,1,1,1,1,1,1,1,1)])) <---- here is the form for data input
