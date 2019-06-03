@@ -14,7 +14,9 @@ import pandas as pd
 import numpy as np
 
 def norm(x):
-    n = pd.read_csv("norm.csv")
+    indices = ['RHipAngleX', 'RHipAngleY', 'RHipAngleZ', 'LHipAngleX', 'LHipAngleY', 'LHipAngleZ',
+    'RKneeAngleZ', 'LKneeAngleZ', "RAnkleAngleX", "RAnkleAngleZ", "LAnkleAngleX", "LAnkleAngleZ"]
+    n = pd.read_csv("norm.csv", index = indices)
     return (x - n['mean']) / n['std']
 
 def getModel():
