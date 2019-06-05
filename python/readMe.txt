@@ -11,6 +11,6 @@ If you want to run Model_Iterator.py, make sure you have:
 2. preTrainedModel_weights.h5
 3. preTrainedModel.json
 
-If you want to retrain a model with ModelPreTrainer:
+If you want to retrain a model with weightpretrainer:
 
 1. allsubject.csv
