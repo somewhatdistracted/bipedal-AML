@@ -33,42 +33,10 @@ vrep.simxFinish(-1) # just in case, close all opened connections
 clientID = vrep.simxStart('127.0.0.1',19997,True,True,5000,5) # Connect to V-REP
 
 if clientID!=-1:
-	#get initial model
-	first_model = model_iterator.getModel();
-	best_models = [first_model,first_model,first_model,first_model,first_model]
-						
-	for iteration in range(100):
-		print ('Connected to remote API server')
-		best_new_distance = []
-		best_new_models = []
-		for m, curr_model in enumerate(best_models):
-			for permutation in range(10):
-				model = curr_model
-				if permutation != 0:
-					model = model_iterator.permuteModel(model) #change to permuted model
-					
-				 # get real permuted model
-				distanceTraveled = simulation.run_sim(model, clientID);
-				
-				for index in range(len(best_models)):
-					if len(best_new_models) <= index:
-						best_new_distance.append(distanceTraveled);
-						best_new_models.append(model)
-						break
-					elif distanceTraveled > best_new_distance[index]:
-						best_new_distance.insert(index, distanceTraveled);
-						if len(best_new_distance) > len(best_models):
-							best_new_distance.pop(len(best_models))
-							
-						best_new_models.insert(index, model)
-						if len(best_new_models) > len(best_models):
-							best_new_models.pop(len(best_models))
-						break
-						
-		best_models = best_new_models
-		print(iteration)
-		print(best_new_distance)
 	
+	subject = 0;
+						
+	simulation.run_sim_data(subject, clientID);
 	
     # Before closing the connection to V-REP, make sure that the last command sent out had time to arrive. You can guarantee this with (for example):
 	vrep.simxGetPingTime(clientID)
@@ -78,4 +46,3 @@ if clientID!=-1:
 else:
     print ('Failed connecting to remote API server')
 print ('Program ended')
-
