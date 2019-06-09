@@ -14,20 +14,22 @@ import pandas as pd
 import numpy as np
 
 def norm(x):
-    column_names = ['RHipAngleX', 'RHipAngleY', 'RHipAngleZ', 'LHipAngleX', 'LHipAngleY', 'LHipAngleZ',
+    col_names = ['RHipAngleX', 'RHipAngleY', 'RHipAngleZ', 'LHipAngleX', 'LHipAngleY', 'LHipAngleZ',
+    'RKneeAngleZ', 'LKneeAngleZ', "RAnkleAngleX", "RAnkleAngleZ", "LAnkleAngleX", "LAnkleAngleZ",'PRHipAngleX', 'PRHipAngleY', 'PRHipAngleZ', 'PLHipAngleX', 'PLHipAngleY', 'PLHipAngleZ',
+    'PRKneeAngleZ', 'PLKneeAngleZ', "PRAnkleAngleX", "PRAnkleAngleZ", "PLAnkleAngleX", "PLAnkleAngleZ"]
+    label_col_names = ['RHipAngleX', 'RHipAngleY', 'RHipAngleZ', 'LHipAngleX', 'LHipAngleY', 'LHipAngleZ',
     'RKneeAngleZ', 'LKneeAngleZ', "RAnkleAngleX", "RAnkleAngleZ", "LAnkleAngleX", "LAnkleAngleZ"]
-    raw = pd.read_csv('allsubject.csv', names = column_names)
+    raw = pd.read_csv('newSubjectDataDirection.csv', names = col_names)
     dataset = raw.copy()
-    labelledset = dataset
-    temp = labelledset.drop([0])
-    labelledset = temp.append(labelledset[:1]).reset_index(drop = True)
+    rawlabels = pd.read_csv('newSubjectDataResults.csv', names = label_col_names)
+    labelledset = rawlabels.copy()
     dataset = pd.concat([dataset, labelledset], axis = 1)
     train_dataset = dataset.sample(frac=0.8,random_state=0)
     test_dataset = dataset.drop(train_dataset.index)
-    train_labels = train_dataset.iloc[:, 12:]
-    train_dataset = train_dataset.iloc[:, :12]
-    test_labels = test_dataset.iloc[:, 12:]
-    test_dataset = test_dataset.iloc[:, :12]
+    train_labels = train_dataset.iloc[:, 24:]
+    train_dataset = train_dataset.iloc[:, :24]
+    test_labels = test_dataset.iloc[:, 24:]
+    test_dataset = test_dataset.iloc[:, :24]
     train_stats = train_dataset.describe()
     train_stats = train_stats.transpose()
     return (x - train_stats['mean']) / train_stats['std']
@@ -55,20 +57,21 @@ def permuteModel(model):
             delta = np.random.rand(x)
         else:
             z = y[0]
-            delta = (np.random.rand(x,z) - 0.5) / 100
+            delta = (np.random.rand(x,z) - 0.5) / 1000
         weights[i] = weights[i] + delta
     model.set_weights(weights)
     return model
 
 def runModel(model, data):
     t = pd.DataFrame(data, columns = ['RHipAngleX', 'RHipAngleY', 'RHipAngleZ', 'LHipAngleX', 'LHipAngleY', 'LHipAngleZ',
-    'RKneeAngleZ', 'LKneeAngleZ', "RAnkleAngleX", "RAnkleAngleZ", "LAnkleAngleX", "LAnkleAngleZ"])
+    'RKneeAngleZ', 'LKneeAngleZ', "RAnkleAngleX", "RAnkleAngleZ", "LAnkleAngleX", "LAnkleAngleZ",'PRHipAngleX', 'PRHipAngleY', 'PRHipAngleZ', 'PLHipAngleX', 'PLHipAngleY', 'PLHipAngleZ',
+    'PRKneeAngleZ', 'PLKneeAngleZ', "PRAnkleAngleX", "PRAnkleAngleZ", "PLAnkleAngleX", "PLAnkleAngleZ"])
     return model.predict(norm(t))
 
 def getActual(step):
     column_names = ['RHipAngleX', 'RHipAngleY', 'RHipAngleZ', 'LHipAngleX', 'LHipAngleY', 'LHipAngleZ',
     'RKneeAngleZ', 'LKneeAngleZ', "RAnkleAngleX", "RAnkleAngleZ", "LAnkleAngleX", "LAnkleAngleZ"]
-    raw = pd.read_csv('newSubjectData.csv', names = column_names)
+    raw = pd.read_csv('training_sub_1.csv', names = column_names)
     dataset = raw.copy()
     return dataset.iloc[step].tolist()
 
