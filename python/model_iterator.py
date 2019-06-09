@@ -68,7 +68,7 @@ def runModel(model, data):
 def getActual(step):
     column_names = ['RHipAngleX', 'RHipAngleY', 'RHipAngleZ', 'LHipAngleX', 'LHipAngleY', 'LHipAngleZ',
     'RKneeAngleZ', 'LKneeAngleZ', "RAnkleAngleX", "RAnkleAngleZ", "LAnkleAngleX", "LAnkleAngleZ"]
-    raw = pd.read_csv('training_sub_1.csv', names = column_names)
+    raw = pd.read_csv('newSubjectData.csv', names = column_names)
     dataset = raw.copy()
     return dataset.iloc[step].tolist()
 

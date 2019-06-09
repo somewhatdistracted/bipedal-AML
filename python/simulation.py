@@ -5,6 +5,7 @@ try:
 	import pandas as pd
 	import model_iterator
 	import math
+	import operator
 except:
     print ('--------------------------------------------------------------')
     print ('"vrep.py" could not be imported. This means very probably that')
@@ -77,7 +78,7 @@ def run_sim(model, clientID):
 		for i in range(12):
 			vrep.simxSetJointTargetPosition(clientID,legJoints[i],newJointPositions[i] * legJointInv[i] * hipJointInv[i],vrep.simx_opmode_oneshot)
 		vrep.simxPauseCommunication(clientID,0)
-		time.sleep(0.001)
+		time.sleep(0.01)
 		
 		returncode, headLocation = vrep.simxGetObjectPosition(clientID, head, -1, vrep.simx_opmode_buffer)
 	
@@ -96,8 +97,10 @@ def run_sim_data(subject, clientID):
 		
 	#RhipX,RhipY,RhipZ,LhipX,LhipY,LhipZ,RKneeZ,LKneeZ,RAnkleX,RAnkleZ,LAnkleX,LAnkleZ
 	legJoints = [0,0,0,0,0,0,0,0,0,0,0,0]
+	#RhipX,RhipY,RhipZ,LhipX,LhipY,LhipZ,RKneeZ,LKneeZ,RAnkleX,RAnkleZ,LAnkleX,LAnkleZ
+	legPositions = [0,0,0,0,0,0,0,0,0,0,0,0]
 	legJointInv = [1,1,1,-1,-1,1,1,1,1,1,-1,1]
-	hipJointInv = [1,1,1,1,1,-1,1,1,1,1,1,1]
+	hipJointInv = [1,1,1,1,1,1,1,1,1,1,1,1]
 	
 	returnCode01, legJoints[0] = vrep.simxGetObjectHandle(clientID, "rightLegJoint0", vrep.simx_opmode_blocking)
 	returnCode02, legJoints[1] = vrep.simxGetObjectHandle(clientID, "rightLegJoint1", vrep.simx_opmode_blocking)
@@ -113,27 +116,39 @@ def run_sim_data(subject, clientID):
 	returnCode011, legJoints[10] = vrep.simxGetObjectHandle(clientID, "leftLegJoint5", vrep.simx_opmode_blocking)
 	returnCode012, legJoints[11] = vrep.simxGetObjectHandle(clientID, "leftLegJoint4", vrep.simx_opmode_blocking)
 	
+	returnCode013, head = vrep.simxGetObjectHandle(clientID, "Asti", vrep.simx_opmode_blocking)
+	
+	headLocation = [1,1,1];
+	returncode, headLocation = vrep.simxGetObjectPosition(clientID, head, -1, vrep.simx_opmode_streaming)
+	
+	for i in range(12):
+		returnCode, legPositions[i] = vrep.simxGetJointPosition(clientID, legJoints[i], vrep.simx_opmode_streaming)
+	
 	#RhipX,RhipY,RhipZ,LhipX,LhipY,LhipZ,RKneeZ,LKneeZ,RAnkleX,RAnkleZ,LAnkleX,LAnkleZ
-	for j in range(((subject * 101)),((subject * 101) + 101)):
-		joint_data = model_iterator.getActual(j)
-		
-		for i in range(len(newJointPositions)):
-			newJointPositions[i] = joint_data[i] * math.pi / 180
-		
-		vrep.simxPauseCommunication(clientID,1)
-		for i in range(12):
-			vrep.simxSetJointTargetPosition(clientID,legJoints[i],newJointPositions[i] * legJointInv[i] * hipJointInv[i],vrep.simx_opmode_oneshot)
-		vrep.simxPauseCommunication(clientID,0)
-		time.sleep(0.001)
-		
-		returncode, headLocation = vrep.simxGetObjectPosition(clientID, head, -1, vrep.simx_opmode_buffer)
-	
-	returnCode, end_r =  vrep.simxGetObjectPosition(clientID, r_foot, -1, vrep.simx_opmode_buffer)
-	returnCode, end_l =  vrep.simxGetObjectPosition(clientID, l_foot, -1, vrep.simx_opmode_buffer)
-	
-	distanceTraveled = 0
+	start_time = int(round(time.time()))
+	while vrep.simxGetConnectionId(clientID) != -1 and ((headLocation[2] > 0.3 or headLocation[2] == 0.0) and ((int(round(time.time())) - start_time) < 100)):
+		for j in range(((subject * 101)),((subject * 101) + 202)):
+			
+			for i in range(12):
+				returnCode, legPositions[i] = vrep.simxGetJointPosition(clientID, legJoints[i], vrep.simx_opmode_buffer)
+			
+			joint_data = model_iterator.getActual(j)
+			newJointPositions = [0,0,0,0,0,0,0,0,0,0,0,0]
+			
+			for i in range(len(newJointPositions)):
+				joint_data[i] = joint_data[i] * math.pi / 180
+				newJointPositions[i] = joint_data[i] * legJointInv[i] * hipJointInv[i]
+			print(j)
+			print(newJointPositions)
+			print()
+			
+			vrep.simxPauseCommunication(clientID,1)
+			for i in range(12):
+				vrep.simxSetJointTargetPosition(clientID,legJoints[i],newJointPositions[i],vrep.simx_opmode_oneshot)
+			vrep.simxPauseCommunication(clientID,0)
+			time.sleep(0.01)
 			
 	vrep.simxStopSimulation(clientID,vrep.simx_opmode_oneshot_wait)
 	time.sleep(0.25)
 	
-	return distanceTraveled
+	return 
