@@ -106,7 +106,6 @@ def run_sim_direction(model, clientID):
 	#RhipX,RhipY,RhipZ,LhipX,LhipY,LhipZ,RKneeZ,LKneeZ,RAnkleX,RAnkleZ,LAnkleX,LAnkleZ
 	legJoints = [0,0,0,0,0,0,0,0,0,0,0,0]
 	legJointInv = [1,1,1,-1,-1,1,1,1,1,1,-1,1]
-	hipJointInv = [1,1,1,1,1,-1,1,1,1,1,1,1]
 	
 	returnCode01, legJoints[0] = vrep.simxGetObjectHandle(clientID, "rightLegJoint0", vrep.simx_opmode_blocking)
 	returnCode02, legJoints[1] = vrep.simxGetObjectHandle(clientID, "rightLegJoint1", vrep.simx_opmode_blocking)
@@ -142,7 +141,7 @@ def run_sim_direction(model, clientID):
 		returnCode, begin_l =  vrep.simxGetObjectPosition(clientID, l_foot, -1, vrep.simx_opmode_streaming)
 	
 	start_time = int(round(time.time()))
-	while vrep.simxGetConnectionId(clientID) != -1 and ((headLocation[2] > 0.0 or headLocation[2] == 0.0) and ((int(round(time.time())) - start_time) < 100)):
+	while vrep.simxGetConnectionId(clientID) != -1 and ((headLocation[2] > 0.5 or headLocation[2] == 0.0) and ((int(round(time.time())) - start_time) < 5)):
 		for i in range(12):
 			returnCode, legPositions[i] = vrep.simxGetJointPosition(clientID, legJoints[i], vrep.simx_opmode_buffer)
 		
@@ -170,9 +169,9 @@ def run_sim_direction(model, clientID):
 		
 		vrep.simxPauseCommunication(clientID,1)
 		for i in range(12):
-			vrep.simxSetJointTargetPosition(clientID,legJoints[i],newJointPositions[i] * legJointInv[i] * hipJointInv[i],vrep.simx_opmode_oneshot)
+			vrep.simxSetJointTargetPosition(clientID,legJoints[i],newJointPositions[i] * legJointInv[i],vrep.simx_opmode_oneshot)
 		vrep.simxPauseCommunication(clientID,0)
-		time.sleep(0.001)
+		time.sleep(0.01)
 		
 		returncode, headLocation = vrep.simxGetObjectPosition(clientID, head, -1, vrep.simx_opmode_buffer)
 	

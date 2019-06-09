@@ -37,18 +37,18 @@ if clientID!=-1:
 	first_model = model_iterator.getModel();
 	best_models = [first_model,first_model,first_model,first_model,first_model]
 						
-	for iteration in range(100):
+	for iteration in range(100000):
 		print ('Connected to remote API server')
 		best_new_distance = []
 		best_new_models = []
 		for m, curr_model in enumerate(best_models):
 			for permutation in range(10):
 				model = curr_model
-				#if permutation != 0:
-					#model = model_iterator.permuteModel(model) #change to permuted model
+				if permutation != 0:
+					model = model_iterator.permuteModel(model) #change to permuted model
 					
 				 # get real permuted model
-				distanceTraveled = simulation.run_sim(model, clientID);
+				distanceTraveled = simulation.run_sim_direction(model, clientID);
 				
 				for index in range(len(best_models)):
 					if len(best_new_models) <= index:
