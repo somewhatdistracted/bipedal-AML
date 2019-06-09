@@ -44,8 +44,8 @@ if clientID!=-1:
 		for m, curr_model in enumerate(best_models):
 			for permutation in range(10):
 				model = curr_model
-				if permutation != 0:
-					model = model_iterator.permuteModel(model) #change to permuted model
+				#if permutation != 0:
+					#model = model_iterator.permuteModel(model) #change to permuted model
 					
 				 # get real permuted model
 				distanceTraveled = simulation.run_sim(model, clientID);
